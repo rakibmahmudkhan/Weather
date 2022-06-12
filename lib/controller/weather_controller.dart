@@ -9,7 +9,7 @@ class WeatherController {
       if (response.statusCode == 200) {
         return response.data["name"];
       } else {
-        return "No name";
+        return "Null";
       }
     } catch (error) {
       print(error);
