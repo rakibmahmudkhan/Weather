@@ -1,19 +1,20 @@
 import 'package:dio/dio.dart';
+import 'package:weather_by_me/models/weather.dart';
 import 'package:weather_by_me/repository/weather_repository.dart';
 
 class WeatherController {
-  Future<String> getWeather() async {
+  Future<MyWeather> getWeather() async {
     try {
       Response response = await WeatherRepository().getWeather();
       print(response);
       if (response.statusCode == 200) {
-        return response.data["name"];
+        return MyWeather.fromJson(response.data);
       } else {
-        return "Null";
+        return MyWeather();
       }
     } catch (error) {
       print(error);
-      return "No name";
+      return MyWeather();
     }
   }
 }
