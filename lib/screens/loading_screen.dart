@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+
 import 'package:weather_by_me/controller/weather_controller.dart';
 import 'package:weather_by_me/models/my_location.dart';
 import 'package:weather_by_me/models/weather.dart';
@@ -11,30 +11,34 @@ class LoadingScreen extends StatefulWidget {
 
 MyWeather? weather;
 bool? isLoading;
+double? lat;
+double? lon;
 
 class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
     getLocation();
-    getWeather();
+
     isLoading = true;
-  }
-
-  void getWeather() async {
-    MyWeather mWeather = await WeatherController().getWeather();
-
-    setState(() {
-      weather = mWeather;
-      isLoading = false;
-    });
   }
 
   void getLocation() async {
     MyLocation myLocation = MyLocation();
     await myLocation.getLocation();
-    print(myLocation.lat);
-    print(myLocation.lon);
+    lat = myLocation.latitude;
+    lon = myLocation.longitude;
+    loadWeather();
+  }
+
+  void loadWeather() async {
+    MyWeather mWeather =
+        await WeatherController().loadWeather(lat: lat!, lon: lon!);
+
+    setState(() {
+      weather = mWeather;
+      isLoading = false;
+    });
   }
 
   @override
@@ -43,7 +47,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
         body: Center(
       child: isLoading == false
           ? Container(
-              child: Text(weather!.name!),
+              child: Text(weather!.wind!.speed!.toString()),
             )
           : CircularProgressIndicator(),
     ));
